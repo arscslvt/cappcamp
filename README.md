@@ -1,5 +1,5 @@
-# cappcamp
-Share your lesson notes with your friends.
+# CappCamp
+Crea e condividi appunti didattici con amici o colleghi della tua università!
 
 
 
