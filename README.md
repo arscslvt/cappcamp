@@ -4,11 +4,10 @@
 Crea e condividi appunti didattici con amici o colleghi della tua università!
 
 
-
 ## Come funziona?
 CappCamp è una piattaforma online che ti consente di condividere con amici o colleghi universitari i tuoi appunti personali. Registrati, carica, attendi la verifica e i tuoi appunti saranno disponibili per tutti!
 
-![CappCamppng](https://user-images.githubusercontent.com/57394934/159783315-f6da2fd2-1b66-4fb9-a198-1dc47b1c919a.png)
+![CappCamppng](https://user-images.githubusercontent.com/57394934/159809473-74f3585d-51d9-43a4-ad93-a151da6f68b0.png)
 
 ## Sicurezza
 Gli appunti sono sostanzialmente dei documenti in formato .epub o .pdf, quindi potrebbero contenere **materiale offensivo o vietato ai minori**. 
