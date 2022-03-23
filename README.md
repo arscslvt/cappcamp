@@ -1,3 +1,5 @@
+![Logo512](https://user-images.githubusercontent.com/57394934/159808899-1a893542-de75-445c-b8e0-43f2be5acea8.png)
+
 # CappCamp
 Crea e condividi appunti didattici con amici o colleghi della tua università!
 
