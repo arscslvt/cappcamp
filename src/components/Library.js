@@ -40,14 +40,15 @@ export default function Library(props) {
             .then((url) => {
               // Insert url into an <img> tag to "download"
               console.log("Image url: " + url);
-              setLibrary([
-                ...library,
+              setLibrary((l) => [
+                ...l,
                 {
                   title: bookData.title,
                   authorId: bookData.authorId,
                   authorAvatar: url,
                   publishDate: bookData.publishDate.toDate(),
                   pagesNumber: bookData.pages,
+                  file: bookData.file,
                 },
               ]);
             })
@@ -57,13 +58,14 @@ export default function Library(props) {
               console.log(
                 "Some error occured. Try later. [Err: " + error + "]."
               );
-              setLibrary([
-                ...library,
+              setLibrary((l) => [
+                ...l,
                 {
                   title: bookData.title,
                   authorId: bookData.authorId,
                   publishDate: bookData.publishDate,
                   pagesNumber: bookData.pages,
+                  file: bookData.file,
                 },
               ]);
             });
@@ -74,7 +76,7 @@ export default function Library(props) {
       });
     };
     getLibrary();
-  }, []);
+  }, [props.userId]);
 
   if (library.length === 0)
     return (
@@ -102,6 +104,7 @@ export default function Library(props) {
                   upDate={element.publishDate}
                   key={index}
                   theme={tilesThemes[1]}
+                  file={element.file ? element.file : false}
                 />
               );
             })

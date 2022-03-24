@@ -36,7 +36,7 @@ export default function TileItem(props) {
   // };
 
   return (
-    <div className="flex rounded-lg bg-lime-300 dark:bg-slate-600  overflow-clip cursor-pointer mr-5 transition-all last:mr-0">
+    <div className="flex rounded-lg bg-lime-700 dark:bg-slate-600  overflow-clip cursor-pointer mr-5 transition-all last:mr-0">
       <div className="flex flex-col flex-1 py-4 px-4 text-white">
         <h2 className="text-lg font-semibold text-white w-40 max-w-md flex-1">
           {props.title}
