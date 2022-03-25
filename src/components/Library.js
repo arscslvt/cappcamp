@@ -48,7 +48,10 @@ export default function Library(props) {
                   authorAvatar: url,
                   publishDate: bookData.publishDate.toDate(),
                   pagesNumber: bookData.pages,
-                  file: bookData.file,
+                  file: ref(
+                    storage,
+                    "users/" + bookData.authorId + "/files/" + bookData.file
+                  ),
                 },
               ]);
             })

@@ -1,39 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Document, Page } from "react-pdf/dist/esm/entry.webpack";
 import spinner from "../assets/icons/spinner.svg";
 import { DocumentTextIcon, CalendarIcon } from "@heroicons/react/outline";
+import { db } from "../firebase/server";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 export default function TileItem(props) {
-  console.log(props);
-  const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
+  const [data, setData] = useState({
+    title: props.title,
+    authorId: props.author,
+    authorAvatar: props.authorAvatar,
+    publishDate: props.upDate,
+  });
+
   function onDocumentLoadSuccess({ numPages }) {
-    setNumPages(numPages);
+    setData((d) => ({ ...d, pages: numPages }));
   }
 
-  // const getDateFromTimestamp = (ts) => {
-  //   const data = new Date(ts);
-  //   const month = [
-  //     "Gennaio",
-  //     "Febbraio",
-  //     "Marzo",
-  //     "Aprile",
-  //     "Maggio",
-  //     "Giugno",
-  //     "Luglio",
-  //     "Agosto",
-  //     "Settembre",
-  //     "Ottobre",
-  //     "Novembre",
-  //     "Dicembre",
-  //   ];
-  //   const format = {
-  //     dd: data.getDate() < 10 ? "0" + data.getDate() : data.getDate(),
-  //     mm: month[data.getMonth()],
-  //     yy: data.getFullYear(),
-  //   };
-  //   return format;
-  // };
+  useEffect(() => {
+    console.log(props.file);
+    getDownloadURL(props.file).then((url) => {
+      console.log("File PDF url: " + url);
+      setData((d) => ({
+        ...d,
+        file: url,
+      }));
+    });
+  }, [props.file]);
+
+  console.log(data);
 
   return (
     <div className="flex rounded-lg bg-lime-700 dark:bg-slate-600  overflow-clip cursor-pointer mr-5 transition-all last:mr-0">
@@ -47,14 +42,6 @@ export default function TileItem(props) {
               <DocumentTextIcon className="w-4 mr-1" />
               {props.pages}
             </p>
-            {/* <p className="flex items-center text-sm font-Def">
-              <CalendarIcon className="w-4 mr-1" />
-              {getDateFromTimestamp(props.upDate).dd +
-                " " +
-                getDateFromTimestamp(props.upDate).mm +
-                " " +
-                getDateFromTimestamp(props.upDate).yy}
-            </p> */}
             {props.authorAvatar ? (
               <img
                 src={props.authorAvatar}
@@ -68,7 +55,7 @@ export default function TileItem(props) {
       {props.file ? (
         <div className="w-max min-w-max mr-3 ml-5 translate-y-4 overflow-clip rounded-t-sm pointer-events-none select-none">
           <Document
-            file={props.file}
+            file={data.file}
             onLoadSuccess={onDocumentLoadSuccess}
             className="w-max min-w-max"
             loading={
@@ -79,11 +66,12 @@ export default function TileItem(props) {
             renderMode={"svg"}
           >
             <Page
-              pageNumber={pageNumber}
+              pageNumber={data.pages}
               width={100}
               loading={"Loading page..."}
             />
           </Document>
+          {/* <embed src={data.file} width="800px" height="2100px" /> */}
         </div>
       ) : null}
     </div>
