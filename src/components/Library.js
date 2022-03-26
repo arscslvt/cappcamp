@@ -21,60 +21,90 @@ export default function Library(props) {
       );
       const storage = getStorage();
       querySnapshot.forEach(async (maindoc) => {
-        // doc.data() is never undefined for query doc snapshots
         const income = maindoc.data();
         console.log(income);
 
-        const docRef = doc(db, "publishings", income.pubId);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          let bookData = docSnap.data();
-          // const imagesRef = ref(storage, "users");
-          const spaceRef = ref(
-            storage,
-            "users/" + docSnap.data().authorId + "/avatar/cappcamp-staff.png"
-          );
-          console.log(spaceRef);
-          getDownloadURL(spaceRef)
-            .then((url) => {
-              // Insert url into an <img> tag to "download"
-              console.log("Image url: " + url);
-              setLibrary((l) => [
-                ...l,
-                {
-                  title: bookData.title,
-                  authorId: bookData.authorId,
-                  authorAvatar: url,
-                  publishDate: bookData.publishDate.toDate(),
-                  pagesNumber: bookData.pages,
-                  file: ref(
+        if (income.ref) {
+          const docSnap = await getDoc(income.ref);
+          if (docSnap.exists()) {
+            console.log(docSnap.data());
+            const bookData = docSnap.data();
+            if (bookData.author) {
+              const getAuthor = await getDoc(bookData.author);
+              if (getAuthor.exists()) {
+                const authorData = getAuthor.data();
+                if (authorData.avatar) {
+                  const pathReference = ref(
                     storage,
-                    "users/" + bookData.authorId + "/files/" + bookData.file
-                  ),
-                },
-              ]);
-            })
-            .catch((error) => {
-              // A full list of error codes is available at
-              // https://firebase.google.com/docs/storage/web/handle-errors
-              console.log(
-                "Some error occured. Try later. [Err: " + error + "]."
-              );
-              setLibrary((l) => [
-                ...l,
-                {
-                  title: bookData.title,
-                  authorId: bookData.authorId,
-                  publishDate: bookData.publishDate,
-                  pagesNumber: bookData.pages,
-                  file: bookData.file,
-                },
-              ]);
-            });
-        } else {
-          // doc.data() will be undefined in this case
-          console.log("No such document!");
+                    "general/assets/avatars/" + authorData.avatar
+                  );
+                  getDownloadURL(pathReference)
+                    .then((url) => {
+                      setLibrary((l) => [
+                        ...l,
+                        {
+                          author: {
+                            id: getAuthor.id,
+                            user: authorData.user,
+                            image: authorData.photoURL
+                              ? authorData.photoURL
+                              : false,
+                            avatar: url,
+                          },
+                          book: {
+                            id: bookData.id,
+                            title: bookData.title,
+                            pages: bookData.pages,
+                            publishDate: bookData.publishDate,
+                            file: bookData.file,
+                          },
+                        },
+                      ]);
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                      setLibrary((l) => [
+                        ...l,
+                        {
+                          author: {
+                            id: getAuthor.id,
+                            user: authorData.user,
+                            image: authorData.photoURL
+                              ? authorData.photoURL
+                              : false,
+                            avatar: false,
+                          },
+                          book: {
+                            id: bookData.id,
+                            title: bookData.title,
+                            pages: bookData.pages,
+                            publishDate: bookData.publishDate,
+                            file: bookData.file,
+                          },
+                        },
+                      ]);
+                    });
+                  console.log(pathReference);
+                }
+              } else {
+                setLibrary((l) => [
+                  ...l,
+                  {
+                    book: {
+                      id: bookData.id,
+                      title: bookData.title,
+                      pages: bookData.pages,
+                      publishDate: bookData.publishDate,
+                    },
+                  },
+                ]);
+              }
+            }
+          } else {
+            console.warn(
+              "We couldn't find this publishing you're searching for."
+            );
+          }
         }
       });
     };
@@ -98,16 +128,10 @@ export default function Library(props) {
             library.map((element, index) => {
               return (
                 <TileItem
-                  title={element.title}
-                  author={element.authorId}
-                  authorAvatar={
-                    element.authorAvatar ? element.authorAvatar : null
-                  }
-                  pages={element.pagesNumber}
-                  upDate={element.publishDate}
+                  book={element.book}
+                  author={element.author ? element.author : false}
                   key={index}
                   theme={tilesThemes[1]}
-                  file={element.file ? element.file : false}
                 />
               );
             })

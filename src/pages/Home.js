@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Nav from "../components/Nav";
 import Alerts from "../components/Alerts";
-import "../firebase/server";
 import { doc, getDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { db } from "../firebase/server";
@@ -50,7 +49,7 @@ export default function Home() {
             lname: data.lname,
             photoURL: data.photoURL ? data.photoURL : null,
             user: data.user,
-            avatar: data.avatar,
+            avatar: data.avatar ? data.avatar : false,
           });
         } else {
           // doc.data() will be undefined in this case
