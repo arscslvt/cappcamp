@@ -20,7 +20,6 @@ export default function Nav(props) {
         "general/assets/avatars/" + props.userData.avatar
       );
       getDownloadURL(pathReference).then((url) => {
-        console.log(url);
         setData((d) => ({
           ...d,
           user: {
@@ -46,7 +45,7 @@ export default function Nav(props) {
         <p>Loading profile...</p>
       </div>
     );
-  } else console.log(data);
+  } else console.log("Waiting Nav data...");
   return (
     <div className="flex items-center w-screen p-5 justify-between">
       <div className="flex items-center">

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../firebase/server";
 import {
   getAuth,
@@ -16,6 +16,7 @@ import Alerts from "../components/Alerts";
 import ScreenLoad from "../components/ScreenLoad";
 
 export default function SignUp() {
+  const nav = useNavigate();
   const provider = new GoogleAuthProvider();
 
   const [loading, setLoading] = useState(false);
@@ -65,14 +66,7 @@ export default function SignUp() {
           });
 
           setLoading(false);
-
-          // ...
-          setAlert({
-            show: true,
-            title: "welcome ✨",
-            text: "You logged in with Google! - (email: " + user.email + ")",
-            type: true,
-          });
+          nav("/login");
         })
         .catch((error) => {
           // Handle Errors here.
@@ -111,13 +105,7 @@ export default function SignUp() {
             console.log("Document written with ID: ", writeUser.id);
             console.log(user);
             setLoading(false);
-
-            setAlert({
-              show: true,
-              title: "welcome ✨",
-              text: "You logged in. Awesome!",
-              type: true,
-            });
+            nav("/login");
           })
           .catch((error) => {
             const errorCode = error.code;
@@ -130,8 +118,6 @@ export default function SignUp() {
                 text: "This e-email is already registered. Try to login or reset your password.",
               });
             }
-
-            // ..
           });
       } else {
         setAlert({

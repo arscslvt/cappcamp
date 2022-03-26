@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import TileItem from "./TileItem";
 import "../firebase/server";
 import { db } from "../firebase/server";
-import { collection, getDocs, getDoc } from "firebase/firestore";
+import { collection, getDocs, getDoc, query, limit } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { CollectionIcon } from "@heroicons/react/outline";
 import { isMobile } from "react-device-detect";
@@ -16,14 +16,14 @@ export default function Library(props) {
 
   useEffect(() => {
     const getLibrary = async () => {
-      const querySnapshot = await getDocs(
-        collection(db, "users", props.userId, "library")
+      const q = query(
+        collection(db, "users", props.userId, "library"),
+        limit(4)
       );
+      const querySnapshot = await getDocs(q);
       const storage = getStorage();
       querySnapshot.forEach(async (maindoc) => {
         const income = maindoc.data();
-        console.log(income);
-
         if (income.ref) {
           const docSnap = await getDoc(income.ref);
           if (docSnap.exists()) {

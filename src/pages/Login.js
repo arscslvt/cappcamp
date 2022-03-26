@@ -15,7 +15,7 @@ import Alerts from "../components/Alerts";
 
 export default function Login() {
   const provider = new GoogleAuthProvider();
-  const navigate = useNavigate();
+  const nav = useNavigate();
 
   const [loading, setLoading] = useState(true);
 
@@ -28,18 +28,13 @@ export default function Login() {
   });
 
   const auth = getAuth();
-  const navTo = () => {
-    console.log("Already logged in.");
-    // return <Link to={"/home"} />;
-    navigate("/home");
-  };
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
       // User is signed in, see docs for a list of available properties
       // https://firebase.google.com/docs/reference/js/firebase.User
       // const uid = user.uid;
-      navTo();
+      nav("/home");
     } else {
       setLoading(false);
     }
@@ -61,7 +56,7 @@ export default function Login() {
             text: "You logged in with Google! - (email: " + user.email + ")",
             type: true,
           });
-          navTo();
+          nav("/home");
         })
         .catch((error) => {
           // Handle Errors here.
