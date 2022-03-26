@@ -35,10 +35,10 @@ export default function SignUp() {
   const auth = getAuth();
 
   const genAvatar = () => {
-    var max = 5;
-    var min = 1;
-    var num = Math.floor(Math.random() * (max - min + 1) + min);
-    return num;
+    const max = 9;
+    const min = 0;
+    const num = Math.floor(Math.random() * (max - min + 1) + min);
+    return "Sample-" + num + ".svg";
   };
 
   const getSignup = (prov) => {

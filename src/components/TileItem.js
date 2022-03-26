@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Document, Page } from "react-pdf/dist/esm/entry.webpack";
 import spinner from "../assets/icons/spinner.svg";
 import { DocumentTextIcon } from "@heroicons/react/outline";
-// import { db } from "../firebase/server";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 export default function TileItem(props) {
@@ -13,10 +12,11 @@ export default function TileItem(props) {
     authorUser: props.author.user,
     authorAvatar: props.author.avatar,
     publishDate: props.book.publishDate,
+    pages: props.book.pages,
   });
 
   useEffect(() => {
-    if (props.book.file) {
+    if (props.book.file && props.mobile === false) {
       const storage = getStorage();
       const pathReference = ref(
         storage,
@@ -49,7 +49,7 @@ export default function TileItem(props) {
           </h2>
           <div className="flex flex-col gap-2 pt-3">
             <div className="flex items-center justify-between gap-4">
-              <p className="flex items-center text-normal font-Def opacity-70">
+              <p className="flex items-center text-sm font-Def opacity-70">
                 <DocumentTextIcon className="w-4 mr-1" />
                 {data.pages ? (
                   data.pages
@@ -59,13 +59,20 @@ export default function TileItem(props) {
                   </div>
                 )}
               </p>
-              {data.authorAvatar ? (
-                <img
-                  src={data.authorAvatar}
-                  alt=""
-                  className="w-5 h-5 aspect-square"
-                />
-              ) : null}
+              <div className="flex items-center">
+                {data.authorUser ? (
+                  <span className="text-sm font-Def opacity-70">
+                    {data.authorUser}
+                  </span>
+                ) : null}
+                {data.authorAvatar ? (
+                  <img
+                    src={data.authorAvatar}
+                    alt=""
+                    className="w-5 h-5 aspect-square ml-1"
+                  />
+                ) : null}
+              </div>
             </div>
           </div>
         </div>
@@ -73,7 +80,7 @@ export default function TileItem(props) {
           <div className="w-max min-w-max mr-3 ml-5 translate-y-4 overflow-clip rounded-t-sm pointer-events-none select-none">
             <Document
               file={data.file}
-              className="w-max min-w-max"
+              className="w-28 h-20"
               loading={
                 <div className="block">
                   <img src={spinner} alt="Loading" className="w-8" />
@@ -82,7 +89,12 @@ export default function TileItem(props) {
               renderMode={"canvas"}
               onLoadSuccess={onDocumentLoadSuccess}
             >
-              <Page pageNumber={1} width={100} loading={"Loading page..."} />
+              <Page
+                pageNumber={1}
+                width={100}
+                loading={"Loading page..."}
+                className="w-full"
+              />
             </Document>
             {/* <embed src={data.file} width="800px" height="2100px" /> */}
           </div>

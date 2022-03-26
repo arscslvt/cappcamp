@@ -4,6 +4,8 @@ import "../firebase/server";
 import { db } from "../firebase/server";
 import { collection, getDocs, getDoc } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { CollectionIcon } from "@heroicons/react/outline";
+import { isMobile } from "react-device-detect";
 
 export default function Library(props) {
   const [library, setLibrary] = useState([]);
@@ -117,10 +119,19 @@ export default function Library(props) {
     );
   else
     return (
-      <div className="px-5 py-5">
-        <h1 className="font-Playfair text-3xl font-medium text-slate-900 dark:text-white">
-          La tua libreria
-        </h1>
+      <div className="px-5 py-5 bg-slate-100">
+        <div className="flex justify-between items-center">
+          <h1 className="font-Playfair text-3xl font-medium text-slate-900 dark:text-white">
+            La tua libreria
+          </h1>
+          <div className="flex items-center gap-2">
+            <button className="items-center gap-2 ml-7 text-white dark:text-white bg-slate-800 dark:bg-gray-700 py-2 px-3 rounded-lg hover:ring-4 hover:ring-gray-200 transition hidden md:flex">
+              <CollectionIcon className="w-4" />
+              <span className="font-medium text-sm">View full library</span>
+            </button>
+          </div>
+        </div>
+
         <div className="flex flex-col mt-5 gap-4 md:gap-0 md:flex-row">
           {
             library.map((element, index) => {
@@ -130,6 +141,7 @@ export default function Library(props) {
                   author={element.author ? element.author : false}
                   key={index}
                   theme={tilesThemes[1]}
+                  mobile={isMobile}
                 />
               );
             })

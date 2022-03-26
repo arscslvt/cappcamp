@@ -9,24 +9,26 @@ export default function Alerts(props) {
 
   return (
     <div
-      className={`absolute flex items-center top-8 ${
+      className={`w-2/3 flex items-center ${
         props.data.type === true ? types.true.bg : types.false.bg
-      }  px-4 py-3 rounded-full`}
+      }  px-4 py-3 rounded-lg justify-between`}
     >
-      <p
-        className={`pr-3 ${
-          props.data.type === true ? types.true.text : types.false.text
-        } font-semibold uppercase text-sm`}
-      >
-        {props.data.title || "alert"}
-      </p>
-      <p className="text-gray-800 font-medium text-sm">
-        {props.data.text || "Some error occured."}
-      </p>
+      <div className="flex flex-col">
+        <p
+          className={`pr-3 ${
+            props.data.type === true ? types.true.text : types.false.text
+          } font-semibold uppercase text-xs`}
+        >
+          {props.data.title || "alert"}
+        </p>
+        <p className="text-gray-800 font-medium text-sm">
+          {props.data.text || "Some error occured."}
+        </p>
+      </div>
       <button
         onClick={() => {
           props.close
-            ? props.close(false)
+            ? props.close()
             : alert("Cannot delete this alert. Try to refresh the page.");
         }}
         className="ml-5 py-1 px-1 uppercase bg-red-600 text-white rounded-full"

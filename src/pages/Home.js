@@ -7,12 +7,11 @@ import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { db } from "../firebase/server";
 import ScreenLoad from "../components/ScreenLoad";
 import Library from "../components/Library";
+import { isSafari } from "react-device-detect";
 
 export default function Home() {
   const navigate = useNavigate();
-  const [alert, setAlert] = useState({
-    show: false,
-  });
+  const [alert, setAlert] = useState([]);
   const [userData, setUserData] = useState(false);
 
   const auth = getAuth();
@@ -23,15 +22,38 @@ export default function Home() {
         navigate("/login");
       })
       .catch((error) => {
-        setAlert({
-          title: "Mmh...",
-          text: "Abbiamo riscontrato problemi durante il tuo logout. Prova più tardi.",
-          type: false,
-        });
+        setAlert((a) => [
+          ...a,
+          {
+            title: "Mmh...",
+            text: "Abbiamo riscontrato problemi durante il tuo logout. Prova più tardi.",
+            type: false,
+            show: true,
+          },
+        ]);
       });
   };
 
   useEffect(() => {
+    if (isSafari) {
+      console.log(isSafari);
+      setAlert((a) => [
+        ...a,
+        {
+          title: "Browser",
+          text: "Abbiamo notato che hai effettuato l'accesso da Safari. Al momento questo browser non è pienamente supportato. Utilizza browser Chromium based (Google Chrome, MS Edge) o Firefox/Opera.",
+          type: false,
+        },
+      ]);
+      setAlert((a) => [
+        ...a,
+        {
+          title: "Browser",
+          text: "Why are u using this shittt bro?",
+          type: false,
+        },
+      ]);
+    }
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         // User is signed in, see docs for a list of available properties
@@ -65,7 +87,22 @@ export default function Home() {
   if (!userData) return <ScreenLoad />;
   return (
     <main className=" w-screen h-screen dark:bg-black">
-      {alert.show ? <Alerts data={alert} close={setAlert} /> : null}
+      <div className="fixed z-20 top-2 left-0 w-screen flex flex-col items-center gap-2">
+        {alert.length > 0
+          ? alert.map((a, index) => {
+              return (
+                <Alerts
+                  data={a}
+                  close={() =>
+                    setAlert(alert.filter((item) => item.text !== a.text))
+                  }
+                  key={index}
+                />
+              );
+            })
+          : null}
+      </div>
+
       <Nav userData={userData ? userData : null} logout={logOut} />
       <Library userId={userData ? userData.uid : null} />
     </main>
