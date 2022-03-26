@@ -87,7 +87,7 @@ export default function Home() {
   if (!userData) return <ScreenLoad />;
   return (
     <main className=" w-screen h-screen dark:bg-black">
-      <div className="fixed z-20 top-2 left-0 w-screen flex flex-col items-center gap-2">
+      <div className="fixed z-20 top-2 left-0 w-screen px-2 flex flex-col items-center gap-2">
         {alert.length > 0
           ? alert.map((a, index) => {
               return (

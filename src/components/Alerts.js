@@ -9,7 +9,7 @@ export default function Alerts(props) {
 
   return (
     <div
-      className={`w-2/3 flex items-center ${
+      className={`w-full md:w-2/3 flex items-center ${
         props.data.type === true ? types.true.bg : types.false.bg
       }  px-4 py-3 rounded-lg justify-between`}
     >
