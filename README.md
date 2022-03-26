@@ -3,6 +3,7 @@
 # CappCamp
 Crea e condividi appunti didattici con amici o colleghi della tua università!
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b35ad9f3-eb15-4f63-abdd-24d232466049/deploy-status)](https://app.netlify.com/sites/cappcamp-beta/deploys)
 
 ## Come funziona?
 CappCamp è una piattaforma online che ti consente di condividere con amici o colleghi universitari i tuoi appunti personali. Registrati, carica, attendi la verifica e i tuoi appunti saranno disponibili per tutti!
