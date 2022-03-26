@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { db } from "../firebase/server";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import noAvatar from "../assets/avatars/sample-10.png";
 
@@ -41,8 +40,6 @@ export default function Nav(props) {
     }
   }, [props.avatar, props.userData]);
 
-  // console.log(avatars[props.userData.avatar]);
-  // console.log(udata);
   if (Object.keys(data).length === 0) {
     return (
       <div>

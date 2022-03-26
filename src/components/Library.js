@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import TileItem from "./TileItem";
-import pdf from "../assets/pdf/test.pdf";
-import Avatar1 from "../assets/avatars/sample-4.png";
 import "../firebase/server";
 import { db } from "../firebase/server";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, getDocs, getDoc } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 export default function Library(props) {

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Document, Page } from "react-pdf/dist/esm/entry.webpack";
 import spinner from "../assets/icons/spinner.svg";
-import { DocumentTextIcon, CalendarIcon } from "@heroicons/react/outline";
-import { db } from "../firebase/server";
+import { DocumentTextIcon } from "@heroicons/react/outline";
+// import { db } from "../firebase/server";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 export default function TileItem(props) {
