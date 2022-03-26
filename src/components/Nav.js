@@ -66,7 +66,7 @@ export default function Nav(props) {
           </span>
           <span className="font-medium"> di {data.user.name.f}</span>
         </p>
-        <button className="flex items-center gap-2 ml-7 text-slate-900 dark:text-white bg-gray-100 dark:bg-gray-700 py-2 px-3 rounded-lg hover:ring-4 hover:ring-gray-200 transition">
+        <button className="items-center gap-2 ml-7 text-slate-900 dark:text-white bg-gray-100 dark:bg-gray-700 py-2 px-3 rounded-lg hover:ring-4 hover:ring-gray-200 transition hidden md:flex">
           <UserAddIcon className="w-4" />
           <span className="font-medium text-sm">Invita amici</span>
         </button>

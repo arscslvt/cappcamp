@@ -121,7 +121,7 @@ export default function Library(props) {
         <h1 className="font-Playfair text-3xl font-medium text-slate-900 dark:text-white">
           La tua libreria
         </h1>
-        <div className="flex mt-5">
+        <div className="flex flex-col mt-5 gap-4 md:gap-0 md:flex-row">
           {
             library.map((element, index) => {
               return (
