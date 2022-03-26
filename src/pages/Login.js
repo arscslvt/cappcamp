@@ -38,7 +38,7 @@ export default function Login() {
     if (user) {
       // User is signed in, see docs for a list of available properties
       // https://firebase.google.com/docs/reference/js/firebase.User
-      const uid = user.uid;
+      // const uid = user.uid;
       navTo();
     } else {
       setLoading(false);
@@ -50,8 +50,8 @@ export default function Login() {
       signInWithPopup(auth, provider)
         .then((result) => {
           // This gives you a Google Access Token. You can use it to access the Google API.
-          const credential = GoogleAuthProvider.credentialFromResult(result);
-          const token = credential.accessToken;
+          // const credential = GoogleAuthProvider.credentialFromResult(result);
+          // const token = credential.accessToken;
           // The signed-in user info.
           const user = result.user;
           // ...
@@ -68,9 +68,9 @@ export default function Login() {
           const errorCode = error.code;
           const errorMessage = error.message;
           // The email of the user's account used.
-          const email = error.email;
+          // const email = error.email;
           // The AuthCredential type that was used.
-          const credential = GoogleAuthProvider.credentialFromError(error);
+          // const credential = GoogleAuthProvider.credentialFromError(error);
           // ...
           setAlert({
             show: true,

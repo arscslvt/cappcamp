@@ -8,7 +8,7 @@ import {
   GoogleAuthProvider,
 } from "firebase/auth";
 import { db } from "../firebase/server";
-import { doc, setDoc, collection, addDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 
 import { UserIcon, AtSymbolIcon, KeyIcon } from "@heroicons/react/outline";
 import googleIcon from "../assets/icons/google.svg";
@@ -47,8 +47,8 @@ export default function SignUp() {
       signInWithPopup(auth, provider)
         .then(async (result) => {
           // This gives you a Google Access Token. You can use it to access the Google API.
-          const credential = GoogleAuthProvider.credentialFromResult(result);
-          const token = credential.accessToken;
+          // const credential = GoogleAuthProvider.credentialFromResult(result);
+          // const token = credential.accessToken;
           // The signed-in user info.
           const user = result.user;
           console.log(user);
@@ -79,9 +79,9 @@ export default function SignUp() {
           const errorCode = error.code;
           const errorMessage = error.message;
           // The email of the user's account used.
-          const email = error.email;
+          // const email = error.email;
           // The AuthCredential type that was used.
-          const credential = GoogleAuthProvider.credentialFromError(error);
+          // const credential = GoogleAuthProvider.credentialFromError(error);
           // ...
           setLoading(false);
 
