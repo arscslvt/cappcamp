@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import noAvatar from "../assets/avatars/sample-10.png";
 
@@ -11,6 +12,7 @@ import {
 
 export default function Nav(props) {
   const [data, setData] = useState({});
+  const nav = useNavigate();
 
   useEffect(() => {
     if (props.userData.avatar) {
@@ -20,6 +22,7 @@ export default function Nav(props) {
         "general/assets/avatars/" + props.userData.avatar
       );
       getDownloadURL(pathReference).then((url) => {
+        console.log("Requested avatar URL.");
         setData((d) => ({
           ...d,
           user: {
@@ -72,10 +75,10 @@ export default function Nav(props) {
       </div>
       {/* Navigation bar: other buttons */}
       <div className="flex items-center gap-4 text-slate-900">
-        <button title="Menu">
+        <button title="Menu" onClick={() => nav("viewer")}>
           <DotsHorizontalIcon className="w-6 aspect-square" />
         </button>
-        <button title="Help">
+        <button title="Help" onClick={() => nav("/home")}>
           <QuestionMarkCircleIcon className="w-6 aspect-square" />
         </button>
       </div>

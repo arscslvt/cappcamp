@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Routes, Route } from "react-router-dom";
 import Nav from "../components/Nav";
 import Alerts from "../components/Alerts";
 import { doc, getDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { db } from "../firebase/server";
 import ScreenLoad from "../components/ScreenLoad";
-import Library from "../components/Library";
+import HomeComponents from "../components/HomeComponents";
 import { isSafari } from "react-device-detect";
+import Viewer from "./Viewer";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -64,7 +65,6 @@ export default function Home() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          //   setUserData(docSnap.data());
           setUserData({
             uid: uidd,
             fname: data.fname,
@@ -86,7 +86,7 @@ export default function Home() {
 
   if (!userData) return <ScreenLoad />;
   return (
-    <main className=" w-screen h-screen dark:bg-black">
+    <main className="flex flex-col w-screen h-screen dark:bg-black">
       <div className="fixed z-20 top-2 left-0 w-screen px-2 flex flex-col items-center gap-2">
         {alert.length > 0
           ? alert.map((a, index) => {
@@ -104,7 +104,15 @@ export default function Home() {
       </div>
 
       <Nav userData={userData ? userData : null} logout={logOut} />
-      <Library userId={userData ? userData.uid : null} />
+
+      <Routes>
+        <Route
+          index
+          element={<HomeComponents user={userData ? userData : null} />}
+        />
+        <Route path="viewer" element={<Viewer />} />
+      </Routes>
+      {/* <Library userId={userData ? userData.uid : null} /> */}
     </main>
   );
 }
