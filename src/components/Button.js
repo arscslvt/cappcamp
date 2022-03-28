@@ -11,7 +11,7 @@ export default function Button(props) {
       } ${
         props.premium && "bg-slate-900 !text-white hover:ring-gray-300"
       } py-2 px-3 rounded-lg hover:ring-4 transition flex`}
-      // onClick={() => (props.link ? nav(props.link) : null)}
+      onClick={() => (props.action() ? props.action() : null)}
     >
       {props.icon && <props.icon className="w-4" />}
       {props.premium && <LightningBoltIcon className="w-4 text-yellow-300" />}

@@ -11,10 +11,13 @@ import {
   DownloadIcon,
   ShareIcon,
   ArrowLeftIcon,
+  XIcon,
 } from "@heroicons/react/outline";
 
 export default function Viewer() {
   const renderSection = useRef();
+  const [fullScreen, setFullScreen] = useState(false);
+  const [nowSize, setNowSize] = useState(0);
   const [renderSize, setRenderSize] = useState(0);
 
   useEffect(() => {
@@ -62,7 +65,13 @@ export default function Viewer() {
                   <span className="uppercase text-sm font-medium opacity-50">
                     by
                   </span>
-                  <span className="flex items-center font-Def font-light -mt-0.5 cursor-pointer w-min">
+                  <span
+                    className="flex items-center font-Def font-light -mt-0.5 cursor-pointer w-min"
+                    onClick={() => {
+                      setFullScreen(true);
+                      setNowSize(renderSize);
+                    }}
+                  >
                     <img src={avatar} alt="Avatar" className="w-5" />
                     <span className="pl-1">CappCamp</span>
                   </span>
@@ -86,16 +95,41 @@ export default function Viewer() {
       </div>
       {/* RENDER FILE */}
       <div
-        className="flex flex-1 justify-end w-full md:w-3/4"
+        // className="flex flex-1 justify-end w-full md:w-3/4"
+        className={
+          fullScreen
+            ? "fixed flex flex-1 top-0 left-0 w-screen h-screen bg-slate-900 bg-opacity-40"
+            : "flex flex-1 justify-end w-full md:w-3/4"
+        }
         ref={renderSection}
       >
+        {fullScreen && (
+          <div className="fixed top-0 left-0 w-screen flex items-center justify-end p-3">
+            <Button
+              text="Close"
+              icon={XIcon}
+              dark
+              action={() => {
+                setFullScreen(false);
+              }}
+            />
+          </div>
+        )}
         <div ref={renderSection} className="flex-1 overflow-y-auto">
-          <RenderFile file={pdf} size={renderSize} />
+          <RenderFile file={pdf} size={fullScreen ? nowSize : renderSize} />
         </div>
       </div>
     </div>
   );
 }
+
+// fullScreen
+//                 ? renderSize > 900
+//                   ? (renderSize * 75) / 100
+//                   : renderSize < 500
+//                   ? (renderSize * 100) / 90
+//                   : renderSize
+//                 : renderSize
 
 const RenderFile = (props) => {
   const [pages, setPages] = useState(0);
@@ -110,7 +144,7 @@ const RenderFile = (props) => {
         file={props.file}
         loading={<p>Loading PDF</p>}
         onLoadSuccess={handleSuccess}
-        className="flex flex-col gap-10"
+        className="flex flex-col gap-10 items-center"
         renderMode="canvas"
       >
         {Array.apply(null, Array(pages))
@@ -122,7 +156,7 @@ const RenderFile = (props) => {
               renderAnnotationLayer={false}
               renderTextLayer={false}
               width={props.size - 100 || 200}
-              className="w-full shadow-xl shadow-slate-300 first:mt-10 last:mb-10"
+              className="w-min shadow-xl shadow-slate-300 first:mt-10 last:mb-10"
               key={page}
             />
           ))}
