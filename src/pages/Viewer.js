@@ -16,6 +16,7 @@ import {
   ArrowLeftIcon,
   XIcon,
   ArrowsExpandIcon,
+  LinkIcon,
 } from "@heroicons/react/outline";
 import { BadgeCheckIcon } from "@heroicons/react/solid";
 
@@ -28,6 +29,7 @@ export default function Viewer() {
   const [nowSize, setNowSize] = useState(0);
   const [renderSize, setRenderSize] = useState(0);
   const [pageNumber, setPageNumber] = useState(0);
+  const [share, setShare] = useState(false);
 
   useEffect(() => {
     setRenderSize(renderSection.current.offsetWidth);
@@ -188,7 +190,20 @@ export default function Viewer() {
                 dark
                 action={() => downloadFile()}
               />
-              <Button text="Share" icon={ShareIcon} />
+              <div className="relative">
+                <Button
+                  text="Share"
+                  icon={ShareIcon}
+                  action={() => setShare(!share)}
+                />
+                {share && (
+                  <Share
+                    link={
+                      "https://cappcamp-beta.netlify.app/home/viewer/" + key
+                    }
+                  />
+                )}
+              </div>
               {isMobile && <Button text="Fullscreen" icon={ArrowsExpandIcon} />}
             </div>
           </div>
@@ -314,6 +329,27 @@ const Tag = (props) => {
       <span className="uppercase text-xs font-medium">
         {props.text || "tag"}
       </span>
+    </div>
+  );
+};
+
+const Share = (props) => {
+  return (
+    <div className="absolute z-30 bg-gray-50 top-10 w-60 min-w-min p-3 rounded-lg">
+      <div>
+        <h1 className="text-md font-semibold">
+          Share this note with your friends.
+        </h1>
+        <div className="flex items-center gap-2 pt-2">
+          <input
+            type="text"
+            value={props.link || "Sorry, we can't generate a link"}
+            className="py-1 px-2 text-sm rounded-md bg-gray-100 text-slate-900 outline-none focus:ring-2 ring-blue-500 transition"
+            readOnly
+          />
+          <Button icon={LinkIcon} />
+        </div>
+      </div>
     </div>
   );
 };

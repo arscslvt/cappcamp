@@ -9,6 +9,7 @@ import ScreenLoad from "../components/ScreenLoad";
 import HomeComponents from "../components/HomeComponents";
 import { isSafari } from "react-device-detect";
 import Viewer from "./Viewer";
+import UploadFile from "./UploadFile";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -114,7 +115,9 @@ export default function Home() {
           path="viewer/:key"
           element={<Viewer user={userData ? userData : null} />}
         />
+
         <Route path="*" element={<ScreenLoad />} />
+        <Route path="upload" element={<UploadFile />} />
       </Routes>
       {/* <Library userId={userData ? userData.uid : null} /> */}
     </main>
