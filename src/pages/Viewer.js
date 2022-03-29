@@ -258,11 +258,14 @@ export default function Viewer() {
 //                 : renderSize
 
 const RenderFile = (props) => {
-  const [setPages] = useState(0);
+  const [pages, setPages] = useState(0);
   let slowLoad = 5;
 
   function handleSuccess({ numPages }) {
-    setPages(numPages);
+    if (numPages <= 10) setPages(numPages);
+    else {
+      setPages(slowLoad);
+    }
     props.setPageN(numPages);
   }
 
@@ -281,7 +284,7 @@ const RenderFile = (props) => {
           dark
           action={() => slowLoad + 5}
         /> */}
-        {Array.apply(null, Array(slowLoad))
+        {Array.apply(null, Array(pages))
           .map((x, i) => i + 1)
           .map((page) => (
             <Page
