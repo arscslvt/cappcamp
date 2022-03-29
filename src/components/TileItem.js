@@ -42,7 +42,7 @@ export default function TileItem(props) {
 
   if (data)
     return (
-      <Link to="viewer" className="mr-5 last:mr-0">
+      <Link to={props.link || "/"} className="mr-5 last:mr-0">
         <div className="flex rounded-lg bg-blue-500 dark:bg-slate-600  overflow-clip cursor-pointer transition-all w-full md:max-w-md md:min-h-max md:w-max">
           <div className="flex flex-col flex-1 text-white p-4">
             <p className="text-xs font-semibold uppercase text-white w-max p-1 bg-slate-50 bg-opacity-20 rounded-md mb-2">

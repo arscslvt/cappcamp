@@ -25,10 +25,10 @@ export default function Library(props) {
       querySnapshot.forEach(async (maindoc) => {
         const income = maindoc.data();
         if (income.ref) {
-          const docSnap = await getDoc(income.ref);
-          if (docSnap.exists()) {
-            console.log(docSnap.data());
-            const bookData = docSnap.data();
+          const getBook = await getDoc(income.ref);
+          if (getBook.exists()) {
+            console.log(getBook.data());
+            const bookData = getBook.data();
             if (bookData.author) {
               const getAuthor = await getDoc(bookData.author);
               if (getAuthor.exists()) {
@@ -52,7 +52,7 @@ export default function Library(props) {
                             avatar: url,
                           },
                           book: {
-                            id: bookData.id,
+                            id: getBook.id,
                             title: bookData.title,
                             pages: bookData.pages,
                             publishDate: bookData.publishDate,
@@ -142,6 +142,7 @@ export default function Library(props) {
                   key={index}
                   theme={tilesThemes[1]}
                   mobile={isMobile}
+                  link={"viewer/" + element.book.id}
                 />
               );
             })

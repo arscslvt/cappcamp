@@ -110,7 +110,11 @@ export default function Home() {
           index
           element={<HomeComponents user={userData ? userData : null} />}
         />
-        <Route path="viewer" element={<Viewer />} />
+        <Route
+          path="viewer/:key"
+          element={<Viewer user={userData ? userData : null} />}
+        />
+        <Route path="*" element={<ScreenLoad />} />
       </Routes>
       {/* <Library userId={userData ? userData.uid : null} /> */}
     </main>

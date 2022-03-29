@@ -1,24 +1,33 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import pdf from "../assets/pdf/test-light.pdf";
+import { useNavigate, useParams } from "react-router-dom";
+// import pdf from "../assets/pdf/test-light.pdf";
 import avatar from "../assets/avatars/sample-6.png";
 import { Document, Page } from "react-pdf/dist/esm/entry.webpack";
 import Button from "../components/Button";
 import ButtonTransparent from "../components/ButtonTransparent";
-import { isDesktop } from "react-device-detect";
+import { isDesktop, isMobile } from "react-device-detect";
+import { storage, db } from "../firebase/server";
+import { doc, getDoc } from "firebase/firestore";
+import { ref, getDownloadURL } from "firebase/storage";
 
 import {
   DownloadIcon,
   ShareIcon,
   ArrowLeftIcon,
   XIcon,
+  ArrowsExpandIcon,
 } from "@heroicons/react/outline";
+import { BadgeCheckIcon } from "@heroicons/react/solid";
 
 export default function Viewer() {
+  const nav = useNavigate();
+  const { key } = useParams();
+  const [fileData, setFileData] = useState({});
   const renderSection = useRef();
   const [fullScreen, setFullScreen] = useState(false);
   const [nowSize, setNowSize] = useState(0);
   const [renderSize, setRenderSize] = useState(0);
+  const [pageNumber, setPageNumber] = useState(0);
 
   useEffect(() => {
     setRenderSize(renderSection.current.offsetWidth);
@@ -30,16 +39,105 @@ export default function Viewer() {
       }, 100);
     };
 
+    const getFile = async () => {
+      const docRef = doc(db, "publishings", key);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const bookData = docSnap.data();
+        const authSnap = await getDoc(bookData.author);
+        if (authSnap.exists()) {
+          const authorData = authSnap.data();
+          const month = [
+            "Gennaio",
+            "Febbraio",
+            "Marzo",
+            "Aprile",
+            "Maggio",
+            "Giugno",
+            "Luglio",
+            "Agosto",
+            "Settembre",
+            "Ottobre",
+            "Novembre",
+            "Dicembre",
+          ];
+          const pub = new Date(bookData.publishDate.toDate());
+          const last = new Date(bookData.lastEdit.toDate());
+          getDownloadURL(
+            ref(storage, `users/${bookData.authorId}/files/${bookData.file}`)
+          )
+            .then((url) => {
+              // `url` is the download URL for 'images/stars.jpg'
+              setFileData((f) => ({
+                ...f,
+                title: bookData.title,
+                publish:
+                  pub.getDay() +
+                  " " +
+                  month[pub.getMonth()] +
+                  " " +
+                  pub.getFullYear(),
+                pages: bookData.pages,
+                lastEdit:
+                  last.getDay() +
+                  " " +
+                  month[last.getMonth()] +
+                  " " +
+                  last.getFullYear(),
+                file: url,
+                authorName: authorData.fname + " " + authorData.lname,
+                authorUser: authorData.user,
+                authorAvatar: authorData.avatar,
+                authorVerified: authorData.verified,
+              }));
+            })
+            .catch((error) => {
+              console.warn(error);
+            });
+        } else {
+          // doc.data() will be undefined in this case
+          console.log("No such document!");
+        }
+      } else {
+        console.log("No such document!");
+        nav("/home");
+      }
+    };
+    getFile();
+
     window.addEventListener("resize", onResize);
-  }, [renderSection]);
+  }, [renderSection, key, nav]);
+
+  const downloadFile = () => {
+    console.log("Downloading...");
+    const xhr = new XMLHttpRequest();
+    xhr.responseType = "blob";
+    xhr.onload = (event) => {
+      const blob = new Blob([xhr.response], { type: "image/pdf" });
+      let a = document.createElement("a");
+      a.style = "display: none";
+      document.body.appendChild(a);
+      let url = window.URL.createObjectURL(blob);
+      a.href = url;
+      a.download =
+        fileData.title + " - @" + fileData.authorUser + " (from CappCamp).pdf";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    };
+    xhr.open("GET", fileData.file);
+    xhr.send();
+  };
+
+  console.log(fileData);
 
   return (
     <div className="w-screen h-4/5 md:overflow-hidden flex-1 flex flex-col md:flex-row md:px-10 gap-5 md:gap-32">
       <div className="flex flex-col-reverse md:flex-col px-5 py-2 md:py-10">
         <div className="flex-1 flex-col">
           <Tag text="general" />
-          <h1 className="text-2xl font-semibold pt-3 pb-5 text-slate-900">
-            The Notion Bears.
+          <h1 className="text-2xl font-semibold pt-3 pb-5 text-slate-900 md:w-72">
+            {fileData.title || "Document title."}
           </h1>
           <div className="flex flex-col gap-8">
             <div className="flex justify-around md:justify-start flex-row items-center md:items-start md:flex-col gap-5 md:gap-3 ring-2 ring-slate-100 md:ring-0 p-2 md:p-0 rounded-lg">
@@ -48,7 +146,7 @@ export default function Viewer() {
                   pages
                 </span>
                 <span className="flex items-center font-Def font-light -mt-0.5">
-                  <span>3</span>
+                  <span>{pageNumber || fileData.pages}</span>
                   {/* <span className="pl-1 opacity-50">/ 35</span> */}
                 </span>
               </div>
@@ -57,7 +155,7 @@ export default function Viewer() {
                   last updated
                 </span>
                 <span className="flex items-center font-Def font-light -mt-0.5">
-                  <span>26 Marzo 2022</span>
+                  <span>{fileData.lastEdit}</span>
                 </span>
               </div>
               {isDesktop ? (
@@ -72,15 +170,26 @@ export default function Viewer() {
                       setNowSize(renderSize);
                     }}
                   >
-                    <img src={avatar} alt="Avatar" className="w-5" />
-                    <span className="pl-1">CappCamp</span>
+                    <img src={avatar} alt="Avatar" className="w-5 h-5" />
+                    <span className="flex items-center ml-2 whitespace-nowrap">
+                      <span>{fileData.authorName}</span>
+                      {fileData.authorVerified && (
+                        <BadgeCheckIcon className="w-4 h-4 ml-2 text-blue-600" />
+                      )}
+                    </span>
                   </span>
                 </div>
               ) : null}
             </div>
             <div className="flex items-center gap-2 justify-start">
-              <Button text="Download" icon={DownloadIcon} dark />
+              <Button
+                text="Download"
+                icon={DownloadIcon}
+                dark
+                action={() => downloadFile()}
+              />
               <Button text="Share" icon={ShareIcon} />
+              {isMobile && <Button text="Fullscreen" icon={ArrowsExpandIcon} />}
             </div>
           </div>
         </div>
@@ -98,13 +207,13 @@ export default function Viewer() {
         // className="flex flex-1 justify-end w-full md:w-3/4"
         className={
           fullScreen
-            ? "fixed flex flex-1 top-0 left-0 w-screen h-screen bg-slate-900 bg-opacity-40"
-            : "flex flex-1 justify-end w-full md:w-3/4"
+            ? "fixed flex flex-1 top-0 left-0 w-screen h-screen bg-slate-900 bg-opacity-40 transition"
+            : "flex flex-1 justify-end w-full md:w-3/4 transition"
         }
         ref={renderSection}
       >
         {fullScreen && (
-          <div className="fixed top-0 left-0 w-screen flex items-center justify-end p-3">
+          <div className="fixed top-0 left-0 w-screen flex items-center justify-end p-3 z-20">
             <Button
               text="Close"
               icon={XIcon}
@@ -116,7 +225,24 @@ export default function Viewer() {
           </div>
         )}
         <div ref={renderSection} className="flex-1 overflow-y-auto">
-          <RenderFile file={pdf} size={fullScreen ? nowSize : renderSize} />
+          <RenderFile
+            file={fileData.file}
+            size={fullScreen ? nowSize : renderSize}
+            setPageN={setPageNumber}
+          />
+          <div className="flex fixed bottom-8 right-10 z-20">
+            {!fullScreen && (
+              <Button
+                text="Fullscreen"
+                icon={ArrowsExpandIcon}
+                hoverOpacity
+                action={() => {
+                  setNowSize(renderSize);
+                  setFullScreen(true);
+                }}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -132,14 +258,16 @@ export default function Viewer() {
 //                 : renderSize
 
 const RenderFile = (props) => {
-  const [pages, setPages] = useState(0);
+  const [setPages] = useState(0);
+  let slowLoad = 5;
 
   function handleSuccess({ numPages }) {
     setPages(numPages);
+    props.setPageN(numPages);
   }
 
   return (
-    <div className="overflow-y-auto md:px-5">
+    <div className="relative overflow-y-auto md:px-5">
       <Document
         file={props.file}
         loading={<p>Loading PDF</p>}
@@ -147,7 +275,13 @@ const RenderFile = (props) => {
         className="flex flex-col gap-10 items-center"
         renderMode="canvas"
       >
-        {Array.apply(null, Array(pages))
+        {/* <Button
+          text="Load more..."
+          icon={RefreshIcon}
+          dark
+          action={() => slowLoad + 5}
+        /> */}
+        {Array.apply(null, Array(slowLoad))
           .map((x, i) => i + 1)
           .map((page) => (
             <Page
