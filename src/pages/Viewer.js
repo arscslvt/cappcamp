@@ -131,8 +131,6 @@ export default function Viewer() {
     xhr.send();
   };
 
-  console.log(fileData);
-
   return (
     <div className="w-screen h-4/5 md:overflow-hidden flex-1 flex flex-col md:flex-row md:px-10 gap-5 md:gap-32">
       <div className="flex flex-col-reverse md:flex-col px-5 py-2 md:py-10">
@@ -194,13 +192,16 @@ export default function Viewer() {
                 <Button
                   text="Share"
                   icon={ShareIcon}
-                  action={() => setShare(!share)}
+                  action={() => {
+                    setShare(!share);
+                  }}
                 />
                 {share && (
                   <Share
                     link={
                       "https://cappcamp-beta.netlify.app/home/viewer/" + key
                     }
+                    setShare={setShare}
                   />
                 )}
               </div>
@@ -334,6 +335,12 @@ const Tag = (props) => {
 };
 
 const Share = (props) => {
+  const handleCopy = () => {
+    window.navigator.clipboard.writeText(props.link).then(() => {
+      props.setShare(false);
+      console.log("Copied to clipboard");
+    });
+  };
   return (
     <div className="absolute z-30 bg-gray-50 top-10 w-60 min-w-min p-3 rounded-lg">
       <div>
@@ -347,7 +354,7 @@ const Share = (props) => {
             className="py-1 px-2 text-sm rounded-md bg-gray-100 text-slate-900 outline-none focus:ring-2 ring-blue-500 transition"
             readOnly
           />
-          <Button icon={LinkIcon} />
+          <Button icon={LinkIcon} action={() => handleCopy()} />
         </div>
       </div>
     </div>
