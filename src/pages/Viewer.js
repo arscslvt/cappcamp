@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-// import pdf from "../assets/pdf/test-light.pdf";
 import avatar from "../assets/avatars/sample-6.png";
-import { Document, Page } from "react-pdf/dist/esm/entry.webpack";
+import { Document, Page, pdfjs } from "react-pdf/dist/esm/entry.webpack5";
 import Button from "../components/Button";
 import ButtonTransparent from "../components/ButtonTransparent";
 import { isDesktop, isMobile } from "react-device-detect";
@@ -20,6 +19,8 @@ import {
 } from "@heroicons/react/outline";
 import { BadgeCheckIcon } from "@heroicons/react/solid";
 
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+
 export default function Viewer() {
   const nav = useNavigate();
   const { key } = useParams();
@@ -30,14 +31,19 @@ export default function Viewer() {
   const [renderSize, setRenderSize] = useState(0);
   const [pageNumber, setPageNumber] = useState(0);
   const [share, setShare] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
-    setRenderSize(renderSection.current.offsetWidth);
+    if (isMobile) {
+      setRenderSize(renderSection.current.offsetWidth + 60);
+    } else setRenderSize(renderSection.current.offsetWidth - 120);
     const onResize = () => {
       let time;
       clearTimeout(time);
       time = setTimeout(() => {
-        setRenderSize(renderSection.current.offsetWidth);
+        if (isDesktop) {
+          setRenderSize(renderSection.current.offsetWidth);
+        }
       }, 100);
     };
 
@@ -113,22 +119,30 @@ export default function Viewer() {
 
   const downloadFile = () => {
     console.log("Downloading...");
-    const xhr = new XMLHttpRequest();
-    xhr.responseType = "blob";
-    xhr.onload = (event) => {
-      const blob = new Blob([xhr.response], { type: "image/pdf" });
-      let a = document.createElement("a");
-      a.style = "display: none";
-      document.body.appendChild(a);
-      let url = window.URL.createObjectURL(blob);
-      a.href = url;
-      a.download =
-        fileData.title + " - @" + fileData.authorUser + " (from CappCamp).pdf";
-      a.click();
-      window.URL.revokeObjectURL(url);
-    };
-    xhr.open("GET", fileData.file);
-    xhr.send();
+    setDownloading(true);
+    setTimeout(() => {
+      const xhr = new XMLHttpRequest();
+      xhr.responseType = "blob";
+      xhr.onload = (event) => {
+        const blob = new Blob([xhr.response], { type: "image/pdf" });
+        let a = document.createElement("a");
+        a.style = "display: none";
+        document.body.appendChild(a);
+        let url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download =
+          fileData.title +
+          " - @" +
+          fileData.authorUser +
+          " (from CappCamp).pdf";
+        a.click();
+        window.URL.revokeObjectURL(url);
+      };
+      xhr.open("GET", fileData.file);
+      xhr.send();
+
+      setDownloading(false);
+    }, 1500);
   };
 
   return (
@@ -187,6 +201,7 @@ export default function Viewer() {
                 icon={DownloadIcon}
                 dark
                 action={() => downloadFile()}
+                loading={downloading}
               />
               <div className="relative">
                 <Button
@@ -205,7 +220,16 @@ export default function Viewer() {
                   />
                 )}
               </div>
-              {isMobile && <Button text="Fullscreen" icon={ArrowsExpandIcon} />}
+              {isMobile && (
+                <Button
+                  text="Immersivo"
+                  icon={ArrowsExpandIcon}
+                  action={() => {
+                    setNowSize(renderSize);
+                    setFullScreen(true);
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -214,7 +238,7 @@ export default function Viewer() {
           <ButtonTransparent
             text="Torna indietro"
             icon={ArrowLeftIcon}
-            link="/home"
+            link="/dashboard"
           />
         </div>
       </div>
@@ -231,7 +255,7 @@ export default function Viewer() {
         {fullScreen && (
           <div className="fixed top-0 left-0 w-screen flex items-center justify-end p-3 z-20">
             <Button
-              text="Close"
+              text={isDesktop ? "Close" : null}
               icon={XIcon}
               dark
               action={() => {
@@ -240,25 +264,25 @@ export default function Viewer() {
             />
           </div>
         )}
-        <div ref={renderSection} className="flex-1 overflow-y-auto">
-          <RenderFile
-            file={fileData.file}
-            size={fullScreen ? nowSize : renderSize}
-            setPageN={setPageNumber}
-          />
-          <div className="flex fixed bottom-8 right-10 z-20">
-            {!fullScreen && (
-              <Button
-                text="Fullscreen"
-                icon={ArrowsExpandIcon}
-                hoverOpacity
-                action={() => {
-                  setNowSize(renderSize);
-                  setFullScreen(true);
-                }}
-              />
-            )}
-          </div>
+
+        <RenderFile
+          file={fileData.file}
+          size={fullScreen ? nowSize : renderSize}
+          setPageN={setPageNumber}
+          reference={renderSection}
+        />
+        <div className="flex fixed bottom-8 right-10 z-20">
+          {!fullScreen && !isMobile && (
+            <Button
+              text="Fullscreen"
+              icon={ArrowsExpandIcon}
+              hoverOpacity
+              action={() => {
+                setNowSize(renderSize);
+                setFullScreen(true);
+              }}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -275,45 +299,64 @@ export default function Viewer() {
 
 const RenderFile = (props) => {
   const [pages, setPages] = useState(0);
-  let slowLoad = 5;
+  const [loading, setLoading] = useState(5);
+  const [totalPages, setTotalPages] = useState(0);
 
   function handleSuccess({ numPages }) {
-    if (numPages <= 10) setPages(numPages);
-    else {
-      setPages(slowLoad);
-    }
+    if (numPages <= 5) setPages(numPages);
+    else setPages(5);
     props.setPageN(numPages);
+    setTotalPages(numPages);
   }
 
+  const handleLoading = (e) => {
+    setLoading(0);
+    // console.log("Full: " + e.target.scrollHeight);
+    // console.log("Top: " + e.target.scrollTop);
+    if (e.target.scrollHeight - 800 < e.target.scrollTop) {
+      // console.error("Maximum reached");
+      if (pages + 5 > totalPages) {
+        setPages(totalPages);
+      } else setPages(pages + 5);
+    }
+  };
+
   return (
-    <div className="relative overflow-y-auto md:px-5">
-      <Document
-        file={props.file}
-        loading={<p>Loading PDF</p>}
-        onLoadSuccess={handleSuccess}
-        className="flex flex-col gap-10 items-center"
-        renderMode="canvas"
-      >
-        {/* <Button
-          text="Load more..."
-          icon={RefreshIcon}
-          dark
-          action={() => slowLoad + 5}
-        /> */}
-        {Array.apply(null, Array(pages))
-          .map((x, i) => i + 1)
-          .map((page) => (
-            <Page
-              pageNumber={page}
-              loading={"Loading page..."}
-              renderAnnotationLayer={false}
-              renderTextLayer={false}
-              width={props.size - 100 || 200}
-              className="w-min shadow-xl shadow-slate-300 first:mt-10 last:mb-10"
-              key={page}
-            />
-          ))}
-      </Document>
+    <div
+      ref={props.reference}
+      className={`flex-1 overflow-y-auto`}
+      // onScroll={(e) => console.log(e)}
+      onScrollCapture={(e) => {
+        handleLoading(e);
+      }}
+    >
+      <div className={"relative overflow-y-auto md:px-5"}>
+        <Document
+          file={props.file}
+          loading={<p>Loading PDF</p>}
+          onLoadSuccess={handleSuccess}
+          className="flex flex-col gap-10 items-center"
+          // renderMode="svg"
+        >
+          {Array.apply(null, Array(pages))
+            .map((x, i) => i + 1)
+            .map((page) => (
+              <Page
+                pageNumber={page}
+                loading={<p>Loading page...</p>}
+                onRenderSuccess={() => {
+                  setLoading(loading + 1);
+                  console.log("rendered");
+                }}
+                renderAnnotationLayer={false}
+                renderTextLayer={false}
+                width={props.size - 100 || 200}
+                className="w-min shadow-xl shadow-slate-300 first:mt-10 last:mb-10"
+                key={page}
+              />
+            ))}
+        </Document>
+      </div>
     </div>
   );
 };

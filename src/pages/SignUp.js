@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "../firebase/server";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -8,7 +7,13 @@ import {
   GoogleAuthProvider,
 } from "firebase/auth";
 import { db } from "../firebase/server";
-import { doc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  collection,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 
 import { UserIcon, AtSymbolIcon, KeyIcon } from "@heroicons/react/outline";
 import googleIcon from "../assets/icons/google.svg";
@@ -42,6 +47,14 @@ export default function SignUp() {
     return "Sample-" + num + ".svg";
   };
 
+  const welcomeFileHandler = async (uid) => {
+    const docRef = await addDoc(collection(db, "users", uid, "library"), {
+      savedAt: serverTimestamp(),
+      ref: doc(db, "publishings/cDoogiKqVv20UvPWzNlL"),
+    });
+    console.log("Document written with ID: ", docRef.id);
+  };
+
   const getSignup = (prov) => {
     setLoading(true);
     if (prov === "google") {
@@ -62,11 +75,15 @@ export default function SignUp() {
             email: user.email,
             photoURL: user.photoURL,
             avatar: genAvatar(),
-            signedAt: user.metadata.createdAt,
+            signedAt: serverTimestamp(),
           });
 
-          setLoading(false);
-          nav("/login");
+          welcomeFileHandler(user.uid).then(() => {
+            setTimeout(() => {
+              setLoading(false);
+              nav("/dashboard");
+            }, 2000);
+          });
         })
         .catch((error) => {
           // Handle Errors here.
@@ -92,23 +109,27 @@ export default function SignUp() {
           .then(async (userCredential) => {
             // Signed in
             const user = userCredential.user;
-            const now = Date.now();
 
-            const writeUser = await setDoc(doc(db, "users", user.uid), {
+            await setDoc(doc(db, "users", user.uid), {
               fname: data.fname,
               lname: data.lname,
               user: data.user,
               email: user.email,
               avatar: genAvatar(),
-              signedAt: now,
+              signedAt: serverTimestamp(),
             });
-            console.log("Document written with ID: ", writeUser.id);
+
             console.log(user);
-            setLoading(false);
-            nav("/login");
+            welcomeFileHandler(user.uid).then(() => {
+              setTimeout(() => {
+                setLoading(false);
+                nav("/dashboard");
+              }, 2000);
+            });
           })
           .catch((error) => {
             const errorCode = error.code;
+            console.log(error);
             setLoading(false);
             // const errorMessage = error.message;
             if (errorCode === "auth/email-already-in-use") {
@@ -269,8 +290,8 @@ export default function SignUp() {
 const TextField = (props) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(e);
-    console.log("name: " + name + " | val: " + value);
+    // console.log(e);
+    // console.log("name: " + name + " | val: " + value);
     props.set((prev) => ({ ...prev, [name]: value }));
   };
   return (

@@ -79,11 +79,10 @@ export default function Home() {
           console.log("No such document!");
         }
       } else {
-        // User is signed out
-        // ...
+        navigate("/login");
       }
     });
-  }, [auth]);
+  }, [auth, navigate]);
 
   if (!userData) return <ScreenLoad />;
   return (

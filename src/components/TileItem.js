@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Document, Page } from "react-pdf/dist/esm/entry.webpack";
-import spinner from "../assets/icons/spinner.svg";
+import LoadingIcon from "../assets/icons/spinner-2.svg";
 import { DocumentTextIcon } from "@heroicons/react/outline";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
@@ -42,8 +42,8 @@ export default function TileItem(props) {
 
   if (data)
     return (
-      <Link to={props.link || "/"} className="mr-5 last:mr-0">
-        <div className="flex rounded-lg bg-blue-500 dark:bg-slate-600  overflow-clip cursor-pointer transition-all w-full md:max-w-md md:min-h-max md:w-max">
+      <Link to={props.link || "/"} className="mr-5 first:ml-4 last:mr-4">
+        <div className="flex rounded-lg bg-slate-700 dark:bg-slate-600  overflow-clip cursor-pointer transition-all w-full md:max-w-md md:min-h-max md:w-max">
           <div className="flex flex-col flex-1 text-white p-4">
             <p className="text-xs font-semibold uppercase text-white w-max p-1 bg-slate-50 bg-opacity-20 rounded-md mb-2">
               {"generic"}
@@ -61,7 +61,11 @@ export default function TileItem(props) {
                     data.pages
                   ) : (
                     <div className="block">
-                      <img src={spinner} alt="Loading" className="w-8" />
+                      <img
+                        src={LoadingIcon}
+                        alt="Loading"
+                        className="w-5 animate-spin"
+                      />
                     </div>
                   )}
                 </p>
@@ -89,7 +93,11 @@ export default function TileItem(props) {
                 className="w-auto overflow-hidden rounded-md"
                 loading={
                   <div className="block">
-                    <img src={spinner} alt="Loading" className="w-8" />
+                    <img
+                      src={LoadingIcon}
+                      alt="Loading"
+                      className="w-5 animate-spin"
+                    />
                   </div>
                 }
                 renderMode={"canvas"}

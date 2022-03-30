@@ -104,24 +104,23 @@ export default function Library(props) {
             console.warn(
               "We couldn't find this publishing you're searching for."
             );
+            setLibrary((l) => [...l, false]);
           }
+        } else {
+          setLibrary((l) => [...l, false, false]);
         }
       });
     };
     getLibrary();
   }, [props.userId]);
 
-  if (library.length === 0)
+  if (library.length === 0) {
+    return <></>;
+  } else
     return (
-      <div>
-        <p>Loading library</p>
-      </div>
-    );
-  else
-    return (
-      <div className="px-5 py-5 bg-slate-100">
-        <div className="flex justify-between items-center">
-          <h1 className="font-Playfair text-3xl font-medium text-slate-900 dark:text-white">
+      <div className="max-w-screen py-5 bg-slate-100 mb-2">
+        <div className="flex px-5 justify-between items-center">
+          <h1 className="font-Playfair text-3xl font-semibold text-slate-900 dark:text-white">
             La tua libreria
           </h1>
           <div className="flex items-center gap-2">
@@ -132,7 +131,7 @@ export default function Library(props) {
           </div>
         </div>
 
-        <div className="flex flex-col mt-5 gap-4 md:gap-0 md:flex-row">
+        <div className="flex flex-col mt-5 gap-4 md:gap-0 md:flex-row max-w-full overflow-x-auto">
           {
             library.map((element, index) => {
               return (

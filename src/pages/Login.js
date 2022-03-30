@@ -34,7 +34,7 @@ export default function Login() {
       // User is signed in, see docs for a list of available properties
       // https://firebase.google.com/docs/reference/js/firebase.User
       // const uid = user.uid;
-      nav("/home");
+      nav("/dashboard");
     } else {
       setLoading(false);
     }
@@ -56,7 +56,7 @@ export default function Login() {
             text: "You logged in with Google! - (email: " + user.email + ")",
             type: true,
           });
-          nav("/home");
+          nav("/dashboard");
         })
         .catch((error) => {
           // Handle Errors here.

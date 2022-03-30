@@ -1,5 +1,6 @@
 import React from "react";
 import { LightningBoltIcon } from "@heroicons/react/solid";
+import LoadingIcon from "../assets/icons/spinner-2.svg";
 
 export default function Button(props) {
   return (
@@ -13,7 +14,11 @@ export default function Button(props) {
       } py-2 px-3 rounded-lg hover:ring-4 transition flex`}
       onClick={() => props.action()}
     >
-      {props.icon && <props.icon className="w-4" />}
+      {props.loading ? (
+        <img src={LoadingIcon} className="w-4 animate-spin" alt="Loading" />
+      ) : props.icon ? (
+        <props.icon className="w-4" />
+      ) : null}
       {props.premium && <LightningBoltIcon className="w-4 text-yellow-300" />}
       {props.text && <span className="font-medium text-sm">{props.text}</span>}
     </button>

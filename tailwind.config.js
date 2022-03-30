@@ -6,7 +6,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ["Raleway", ...defaultTheme.fontFamily.sans],
-        Playfair: ["Playfair Display"],
+        Playfair: ["Raleway"],
         Def: defaultTheme.fontFamily.sans,
       },
     },
