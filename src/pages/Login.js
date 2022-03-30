@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "../firebase/server";
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -8,20 +7,22 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged,
 } from "firebase/auth";
+import { db } from "../firebase/server";
+import { doc, getDoc } from "firebase/firestore";
+import { ArrowNarrowRightIcon } from "@heroicons/react/outline";
 
 import googleIcon from "../assets/icons/google.svg";
 import ScreenLoad from "../components/ScreenLoad";
 import Alerts from "../components/Alerts";
 
-export default function Login() {
+export default function Login(props) {
   const provider = new GoogleAuthProvider();
   const nav = useNavigate();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [loggedUser, setLoggedUser] = useState(false);
 
-  const [alert, setAlert] = useState({
-    show: false,
-  });
+  const [alert, setAlert] = useState([]);
   const [data, setData] = useState({
     email: "",
     pass: "",
@@ -29,16 +30,34 @@ export default function Login() {
 
   const auth = getAuth();
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // User is signed in, see docs for a list of available properties
-      // https://firebase.google.com/docs/reference/js/firebase.User
-      // const uid = user.uid;
-      nav("/dashboard");
-    } else {
-      setLoading(false);
-    }
-  });
+  useEffect(() => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        const uid = user.uid;
+        // nav("/dashboard");
+        const docRef = doc(db, "users", uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setLoggedUser({
+            userName: data.user,
+            fname: data.fname,
+            lname: data.lname,
+          });
+        } else {
+          // doc.data() will be undefined in this case
+          console.log("No such document!");
+          setLoggedUser(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    });
+  }, [auth]);
+
+  if (loggedUser) console.log(loggedUser);
 
   const getLogged = (prov) => {
     if (prov === "google") {
@@ -67,12 +86,25 @@ export default function Login() {
           // The AuthCredential type that was used.
           // const credential = GoogleAuthProvider.credentialFromError(error);
           // ...
-          setAlert({
-            show: true,
-            title: errorCode,
-            text: errorMessage,
-            type: false,
-          });
+          if (errorCode === "auth/user-not-found") {
+            setAlert((a) => [
+              ...a,
+              {
+                title: "dove sei?",
+                text: "Sembra che non ci sia alcun account registrato con questa e-mail. Controlla l'email o crea un nuovo account.",
+                type: false,
+              },
+            ]);
+          } else if (errorCode !== "auth/popup-closed-by-user") {
+            setAlert((a) => [
+              ...a,
+              {
+                title: errorCode,
+                text: errorMessage,
+                type: false,
+              },
+            ]);
+          }
         });
     } else if (prov === "cred") {
       if (data.email && data.pass) {
@@ -91,19 +123,35 @@ export default function Login() {
             const errorCode = error.code;
             const errorMessage = error.message;
             if (errorCode === "auth/user-not-found") {
-              setAlert({
-                show: true,
-                title: "Non ti troviamo 🥲",
-                text: "Sembra che non ci sia alcun account registrato con questa e-mail.",
-                type: false,
-              });
+              console.log("not found");
+              setAlert((a) => [
+                ...a,
+                {
+                  show: true,
+                  title: "Non ti troviamo 🥲",
+                  text: "Sembra che non ci sia alcun account registrato con questa e-mail.",
+                  type: false,
+                },
+              ]);
+            } else if (errorCode === "auth/wrong-password") {
+              setAlert((a) => [
+                ...a,
+                {
+                  title: "Password errata",
+                  text: "Sembra che la password che hai inserito non è corretta. Riprova o ripristinala subito.",
+                  type: false,
+                },
+              ]);
             } else {
-              setAlert({
-                show: true,
-                title: errorCode,
-                text: errorMessage,
-                type: false,
-              });
+              setAlert((a) => [
+                ...a,
+                {
+                  show: true,
+                  title: errorCode,
+                  text: errorMessage,
+                  type: false,
+                },
+              ]);
             }
           });
       } else {
@@ -119,7 +167,21 @@ export default function Login() {
   return (
     <div className="flex w-screen h-screen justify-center items-center">
       {loading ? <ScreenLoad /> : null}
-      {alert.show ? <Alerts data={alert} close={setAlert} /> : null}
+      <div className="fixed z-20 top-2 left-0 w-screen px-2 flex flex-col items-center gap-2">
+        {alert.length > 0
+          ? alert.map((a, index) => {
+              return (
+                <Alerts
+                  data={a}
+                  close={() =>
+                    setAlert(alert.filter((item) => item.text !== a.text))
+                  }
+                  key={index}
+                />
+              );
+            })
+          : null}
+      </div>
       <div className="w-80">
         <h1 className="text-2xl font-semibold">Login to your account.</h1>
         <p className=" text-sm">
@@ -164,7 +226,24 @@ export default function Login() {
             />
           </label>
         </form>
-        <div className="flex items-center gap-4 py-4 justify-between">
+        {loggedUser ? (
+          <div className="w-full flex flex-col items-center gap-3 pb-10 animate-fadeInDown">
+            <p className="text-slate-800 opacity-50">oppure</p>
+            <div>
+              <button
+                className="flex items-center bg-slate-100 text-slate-800 font-medium py-2 px-4 rounded-full hover:ring-4 ring-blue-500 transition-all cursor-pointer"
+                onClick={() => nav("/dashboard")}
+              >
+                <p>
+                  Continua come{" "}
+                  <span className="font-semibold">{loggedUser.fname}</span>
+                </p>
+                <ArrowNarrowRightIcon className="w-5 ml-2" />
+              </button>
+            </div>
+          </div>
+        ) : null}
+        <div className="flex items-center gap-4 py-4 justify-between transition-all">
           <button
             className={`font-medium transition-opacity ${
               data ? "opacity-100" : "opacity-30 pointer-events-none"

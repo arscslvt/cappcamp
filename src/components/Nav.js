@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import noAvatar from "../assets/avatars/sample-10.png";
 
@@ -12,7 +12,7 @@ import {
 
 export default function Nav(props) {
   const [data, setData] = useState({});
-  const nav = useNavigate();
+  // const nav = useNavigate();
 
   useEffect(() => {
     if (props.userData.avatar) {
@@ -44,11 +44,15 @@ export default function Nav(props) {
 
   if (Object.keys(data).length === 0) {
     return (
-      <div>
-        <p>Loading profile...</p>
+      <div className="flex items-center justify-between p-5 animate-pulse">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-slate-100 rounded-full" />
+          <div className="h-3 w-20 bg-slate-100 rounded-full" />
+        </div>
+        <div className="w-4 h-4 rounded-full bg-slate-10" />
       </div>
     );
-  } else console.log("Waiting Nav data...");
+  }
   return (
     <div className="flex items-center w-screen p-5 justify-between">
       <div className="flex items-center">
@@ -62,7 +66,7 @@ export default function Nav(props) {
             className="w-full h-full"
           />
         </button>
-        <p className="pl-3 text-slate-900 dark:text-white">
+        <p className="pl-3 text-slate-900">
           <span className="font-bold bg-gradient-to-r from-blue-300 to-pink-500 text-transparent bg-clip-text">
             CappCamp
           </span>
@@ -75,10 +79,10 @@ export default function Nav(props) {
       </div>
       {/* Navigation bar: other buttons */}
       <div className="flex items-center gap-4 text-slate-900">
-        <button title="Menu" onClick={() => nav("viewer")}>
+        <button title="Menu">
           <DotsHorizontalIcon className="w-6 aspect-square" />
         </button>
-        <button title="Help" onClick={() => nav("/home")}>
+        <button title="Help">
           <QuestionMarkCircleIcon className="w-6 aspect-square" />
         </button>
       </div>

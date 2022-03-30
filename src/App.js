@@ -1,3 +1,4 @@
+import React from "react";
 import { Routes, Route } from "react-router-dom";
 
 import Main from "./pages/Main";
@@ -11,7 +12,7 @@ function App() {
       <Route path="/" element={<Main />} />
       <Route path="signup" element={<SignUp />} />
       <Route path="login" element={<Login />} />
-      <Route path="dashboard/*" element={<Home />} />
+      <Route path="/dashboard" element={<Home />} />
     </Routes>
   );
 }

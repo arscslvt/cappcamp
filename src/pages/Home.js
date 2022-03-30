@@ -42,17 +42,14 @@ export default function Home() {
       setAlert((a) => [
         ...a,
         {
-          title: "Browser",
-          text: "Abbiamo notato che hai effettuato l'accesso da Safari. Al momento questo browser non è pienamente supportato. Utilizza browser Chromium based (Google Chrome, MS Edge) o Firefox/Opera.",
+          title: "accesso da safari",
+          text: "Al momento questo browser non è pienamente supportato. Utilizza dei browser Chromium based come Google Chrome, MS Edge oppure Firefox/Opera.",
           type: false,
         },
-      ]);
-      setAlert((a) => [
-        ...a,
         {
-          title: "Browser",
-          text: "Why are u using this shittt bro?",
-          type: false,
+          title: "🚧 bee, boop, beep",
+          text: "CappCamp è ancora in fase ALPHA1.3, e non è ancora stato completamente testato su tutti i browser. Se riscontri problemi, contatta @cappcamp_team su Twitter.",
+          type: true,
         },
       ]);
     }
@@ -86,7 +83,7 @@ export default function Home() {
 
   if (!userData) return <ScreenLoad />;
   return (
-    <main className="flex flex-col w-screen h-screen dark:bg-black">
+    <main className="flex flex-col w-screen h-screen">
       <div className="fixed z-20 top-2 left-0 w-screen px-2 flex flex-col items-center gap-2">
         {alert.length > 0
           ? alert.map((a, index) => {

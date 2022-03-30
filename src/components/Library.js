@@ -120,18 +120,18 @@ export default function Library(props) {
     return (
       <div className="max-w-screen py-5 bg-slate-100 mb-2">
         <div className="flex px-5 justify-between items-center">
-          <h1 className="font-Playfair text-3xl font-semibold text-slate-900 dark:text-white">
+          <h1 className="font-Playfair text-3xl font-semibold text-slate-900">
             La tua libreria
           </h1>
           <div className="flex items-center gap-2">
-            <button className="items-center gap-2 ml-7 text-white dark:text-white bg-slate-800 dark:bg-gray-700 py-2 px-3 rounded-lg hover:ring-4 hover:ring-gray-200 transition hidden md:flex">
+            <button className="items-center gap-2 ml-7 text-white bg-slate-800 py-2 px-3 rounded-lg hover:ring-4 hover:ring-gray-200 transition hidden md:flex">
               <CollectionIcon className="w-4" />
               <span className="font-medium text-sm">View full library</span>
             </button>
           </div>
         </div>
 
-        <div className="flex flex-col mt-5 gap-4 md:gap-0 md:flex-row max-w-full overflow-x-auto">
+        <div className="flex flex-col mt-5 gap-4 md:gap-0 md:flex-row max-w-full overflow-x-auto px-4 md:px-0">
           {
             library.map((element, index) => {
               return (

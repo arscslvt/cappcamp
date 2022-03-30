@@ -6,7 +6,7 @@ export default function LatestNote() {
   return (
     <div className="max-w-screen flex flex-1 flex-wrap">
       <div className="flex px-5 justify-between items-center">
-        <h1 className="font-Playfair text-3xl font-semibold text-slate-900 dark:text-white">
+        <h1 className="font-Playfair text-3xl font-semibold text-slate-900">
           In base alle tue preferenze
         </h1>
       </div>

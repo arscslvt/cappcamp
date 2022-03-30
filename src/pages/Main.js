@@ -18,7 +18,7 @@ export default function Main() {
             <button className="bg-slate-900 text-white font-medium py-2 px-4 rounded-full hover:ring-4 ring-orange-300 transition-all">
               Take a tour
             </button>
-            <Link to={"signup"}>
+            <Link to={"login"}>
               <button className="font-medium">skip</button>
             </Link>
           </div>
