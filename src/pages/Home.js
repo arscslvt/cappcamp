@@ -7,7 +7,7 @@ import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { db } from "../firebase/server";
 import ScreenLoad from "../components/ScreenLoad";
 import HomeComponents from "../components/HomeComponents";
-import { isSafari } from "react-device-detect";
+// import { isSafari } from "react-device-detect";
 import Viewer from "./Viewer";
 import UploadFile from "./UploadFile";
 
@@ -37,22 +37,22 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (isSafari) {
-      console.log(isSafari);
-      setAlert((a) => [
-        ...a,
-        {
-          title: "accesso da safari",
-          text: "Al momento questo browser non è pienamente supportato. Utilizza dei browser Chromium based come Google Chrome, MS Edge oppure Firefox/Opera.",
-          type: false,
-        },
-        {
-          title: "🚧 bee, boop, beep",
-          text: "CappCamp è ancora in fase ALPHA1.3, e non è ancora stato completamente testato su tutti i browser. Se riscontri problemi, contatta @cappcamp_team su Twitter.",
-          type: true,
-        },
-      ]);
-    }
+    // if (isSafari) {
+    //   console.log(isSafari);
+    //   setAlert((a) => [
+    //     ...a,
+    //     {
+    //       title: "accesso da safari",
+    //       text: "Al momento questo browser non è pienamente supportato. Utilizza dei browser Chromium based come Google Chrome, MS Edge oppure Firefox/Opera.",
+    //       type: false,
+    //     },
+    //     {
+    //       title: "🚧 bee, boop, beep",
+    //       text: "CappCamp è ancora in fase ALPHA1.3, e non è ancora stato completamente testato su tutti i browser. Se riscontri problemi, contatta @cappcamp_team su Twitter.",
+    //       type: true,
+    //     },
+    //   ]);
+    // }
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         // User is signed in, see docs for a list of available properties
