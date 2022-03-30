@@ -1,13 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import spinner from "../assets/icons/spinnerDark.svg";
 
 export default function ScreenLoad() {
   const [hint, setHint] = useState(false);
-  setTimeout(() => {
-    setHint(true);
-  }, 3500);
+  const el = useRef(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (el.current) setHint(true);
+    }, 3500);
+  }, []);
+
   return (
-    <div className="flex flex-col items-center justify-center fixed top-0 left-0 w-screen h-screen bg-slate-100 bg-opacity-50">
+    <div
+      className="flex flex-col items-center justify-center fixed top-0 left-0 w-screen h-screen bg-slate-100 bg-opacity-50"
+      ref={el}
+    >
       <div className="flex flex-col items-center">
         <img
           src={spinner}

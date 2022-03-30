@@ -46,7 +46,7 @@ export default function TileItem(props) {
         to={props.link || "/"}
         className="md:mr-5 md:first:ml-4 md:last:mr-4 w-full md:max-w-md md:min-h-max md:w-max"
       >
-        <div className="flex rounded-lg bg-slate-700 overflow-clip cursor-pointer transition-all w-full md:max-w-md md:min-h-max md:w-max">
+        <div className="flex rounded-lg bg-slate-800 overflow-clip cursor-pointer transition-all w-full md:max-w-md md:min-h-max md:w-max">
           <div className="flex flex-col flex-1 text-white p-4">
             <p className="text-xs font-semibold uppercase text-white w-max p-1 bg-slate-50 bg-opacity-20 rounded-md mb-2">
               {"generic"}

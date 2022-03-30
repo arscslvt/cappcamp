@@ -100,7 +100,7 @@ export default function Home() {
           : null}
       </div>
 
-      <Nav userData={userData ? userData : null} logout={logOut} />
+      <Nav userData={userData ? userData : false} logout={logOut} />
 
       <Routes>
         <Route
