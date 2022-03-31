@@ -214,7 +214,8 @@ export default function Viewer() {
                 {share && (
                   <Share
                     link={
-                      "https://cappcamp-beta.netlify.app/home/viewer/" + key
+                      "https://cappcamp-beta.netlify.app/dashboard/viewer/" +
+                      key
                     }
                     setShare={setShare}
                   />

@@ -58,7 +58,7 @@ export default function Nav(props) {
   return (
     <div className="flex flex-col w-screen">
       <div className="flex items-center w-full p-5 justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5">
           <div className="flex gap-3 items-center">
             <button
               className="rounded-full w-8 h-8 cursor-pointer hover:ring-4 transition"
@@ -77,7 +77,7 @@ export default function Nav(props) {
               <span className="font-medium"> di {data.user.name.f}</span>
             </p>
           </div>
-          <button className="items-center gap-2 ml-7 text-slate-900 dark:text-white bg-gray-100 dark:bg-gray-700 py-2 px-3 rounded-lg hover:ring-4 hover:ring-gray-200 transition hidden md:flex">
+          <button className="items-center gap-2 text-slate-900 dark:text-white bg-gray-100 dark:bg-gray-700 py-2 px-3 rounded-lg hover:ring-4 hover:ring-gray-200 transition hidden md:flex">
             <UserAddIcon className="w-4" />
             <span className="font-medium text-sm">Invita amici</span>
           </button>

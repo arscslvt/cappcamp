@@ -48,8 +48,8 @@ export default function TileItem(props) {
       >
         <div className="flex rounded-lg bg-slate-800 overflow-clip cursor-pointer transition-all w-full md:max-w-md md:min-h-max md:w-max">
           <div className="flex flex-col flex-1 text-white p-4">
-            <p className="text-xs font-semibold uppercase text-white w-max p-1 bg-slate-50 bg-opacity-20 rounded-md mb-2">
-              {"generic"}
+            <p className="text-xs font-semibold uppercase text-white w-min max-w-md md:max-w-xxs whitespace-nowrap overflow-hidden text-ellipsis block p-1 bg-slate-50 bg-opacity-20 rounded-md mb-2">
+              {props.book.courseName || "generic"}
             </p>
             <h2 className="text-lg font-semibold text-white flex-1">
               {data.title.length > 40

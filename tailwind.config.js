@@ -3,6 +3,9 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
+    maxWidth: {
+      xxs: "8rem",
+    },
     extend: {
       keyframes: {
         fadeInDown: {

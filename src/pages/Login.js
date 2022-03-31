@@ -274,8 +274,6 @@ export default function Login(props) {
 const TextField = (props) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(e);
-    console.log("name: " + name + " | val: " + value);
     props.set((prev) => ({ ...prev, [name]: value }));
   };
   return (

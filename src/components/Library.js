@@ -23,13 +23,23 @@ export default function Library(props) {
       const querySnapshot = await getDocs(q);
       const storage = getStorage();
       querySnapshot.forEach(async (maindoc) => {
+        let courseData;
+        // FETCH ALL DATA
         const income = maindoc.data();
         if (income.ref) {
+          // FETCH BOOK DATA
           const getBook = await getDoc(income.ref);
           if (getBook.exists()) {
             console.log(getBook.data());
             const bookData = getBook.data();
+            if (bookData.course) {
+              const getCourse = await getDoc(bookData.course);
+              if (getCourse.exists()) {
+                courseData = getCourse.data();
+              }
+            }
             if (bookData.author) {
+              // FETCH AUTHOR DATA
               const getAuthor = await getDoc(bookData.author);
               if (getAuthor.exists()) {
                 const authorData = getAuthor.data();
@@ -57,6 +67,7 @@ export default function Library(props) {
                             pages: bookData.pages,
                             publishDate: bookData.publishDate,
                             file: bookData.file,
+                            courseName: courseData ? courseData.name : false,
                           },
                         },
                       ]);
