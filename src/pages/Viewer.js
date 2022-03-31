@@ -55,9 +55,11 @@ export default function Viewer() {
       if (docSnap.exists()) {
         const bookData = docSnap.data();
         const authSnap = await getDoc(bookData.author);
-        const getCourse = await getDoc(bookData.course);
-        if (getCourse.exists()) {
-          course = getCourse.data();
+        if (bookData.course) {
+          const getCourse = await getDoc(bookData.course);
+          if (getCourse.exists()) {
+            course = getCourse.data();
+          }
         }
 
         if (authSnap.exists()) {
