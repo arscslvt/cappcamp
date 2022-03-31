@@ -50,10 +50,16 @@ export default function Viewer() {
     const getFile = async () => {
       const docRef = doc(db, "publishings", key);
       const docSnap = await getDoc(docRef);
+      let course;
 
       if (docSnap.exists()) {
         const bookData = docSnap.data();
         const authSnap = await getDoc(bookData.author);
+        const getCourse = await getDoc(bookData.course);
+        if (getCourse.exists()) {
+          course = getCourse.data();
+        }
+
         if (authSnap.exists()) {
           const authorData = authSnap.data();
           const month = [
@@ -98,6 +104,7 @@ export default function Viewer() {
                 authorUser: authorData.user,
                 authorAvatar: authorData.avatar,
                 authorVerified: authorData.verified,
+                course: course ? course.name : false,
               }));
             })
             .catch((error) => {
@@ -149,7 +156,7 @@ export default function Viewer() {
     <div className="w-screen h-4/5 md:overflow-hidden flex-1 flex flex-col md:flex-row md:px-10 gap-5 md:gap-32">
       <div className="flex flex-col-reverse md:flex-col px-5 py-2 md:py-10">
         <div className="flex-1 flex-col">
-          <Tag text="general" />
+          {fileData.course ? <Tag text={fileData.course} /> : null}
           <h1 className="text-2xl font-semibold pt-3 pb-5 text-slate-900 md:w-72">
             {fileData.title || "Document title."}
           </h1>
@@ -366,7 +373,7 @@ const Tag = (props) => {
   const nav = useNavigate();
   return (
     <div
-      className={`flex items-center py-2 px-3 bg-slate-100 text-slate-900 rounded-lg w-min ${
+      className={`flex items-center py-2 px-3 bg-slate-100 text-slate-900 rounded-lg w-max max-w-xs ${
         props.link || props.action ? "cursor-pointer" : null
       }`}
       onClick={props.link ? () => nav(props.link) : null}
