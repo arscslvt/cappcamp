@@ -4,7 +4,8 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     maxWidth: {
-      xxs: "8rem",
+      xxxs: "8rem",
+      xxs: "16rem",
     },
     extend: {
       keyframes: {
